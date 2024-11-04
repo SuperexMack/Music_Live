@@ -9,7 +9,7 @@ function App() {
      <BrowserRouter>
      <Routes>
       <Route path='/' element={<LandingPage></LandingPage>}></Route>
-      <Route path='https://music-live-pi.vercel.app/go' element={<Song></Song>}></Route>
+      <Route path='/go' element={<Song></Song>}></Route>
      </Routes>
      </BrowserRouter>
     </>
