@@ -1,13 +1,82 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export function SongNavbar() {
   const [Title, setTitle] = useState("");
   const [link, setLink] = useState("");
+  const [songQueue, setSongQueue] = useState([])
+  const [songIndex , setSongIndex] = useState(0)
 
-  const API_KEY = "AIzaSyDeP_3n0wyySHYRk1_MGk76devXQS5Ls_g";
 
-  const searchVideo = async () => {
+
+
+  // now using this we are going to get all the song with it's name and it's id
+
+  useEffect(()=>{
+    const instantCallerSongs = async()=>{
+    await axios.get("http://localhost:9000/v1/songs/getAllSongs")
+    .then((response)=>{
+      console.log(response.data.allSongs)
+      setSongQueue(response.data.allSongs)
+      return toast.success("All songs fetched successfully")
+    })
+    .catch((error)=>{
+      console.log("something went wrong while getting the songs" + error)
+    })
+    }
+    instantCallerSongs()
+  },[])
+
+
+  // using this we are going to add the song to the database
+
+  const sendSongToBackend = async()=>{
+    try{
+      await axios.post("http://localhost:9000/v1/songs/AddSong" , {
+        songName : Title
+      })
+      toast.success("song added successfully , congratulations")
+    }
+    catch(error){
+      console.log("Something went wrong while adding the song to the database "  + error)
+      toast.error("Something went wrong while adding the song to the database "  + error)
+    }
+    
+  }
+
+
+  // here we are going to play the song
+
+  useEffect(()=>{
+    // now we are going to get the data
+    if(songQueue.length<=0){
+      return
+    }
+    const caller = async()=>{
+    
+      let getSongId = songQueue[songIndex] // we are tracking elememt
+
+      if (!getSongId) {
+        console.log("No song found at the current index.");
+        return;
+      }
+     
+  
+      await searchVideo(getSongId.songName)
+      setTimeout(async()=>{
+        await deleteSong(getSongId.id)
+        setSongIndex(prev=>prev+1)
+      },5000)
+  
+    }
+    caller()
+  },[songQueue,songIndex])
+
+  const API_KEY = "AIzaSyBMmDk3iaow6yn7TYSyap0yXmQ3BQPrbGI";
+
+  const searchVideo = async (q) => {
     try {
       const response = await axios.get(
         `https://www.googleapis.com/youtube/v3/search`,
@@ -15,7 +84,7 @@ export function SongNavbar() {
           params: {
             part: "snippet",
             maxResults: 1,
-            q: Title,
+            q: q,
             key: API_KEY,
             type: "video",
           },
@@ -36,6 +105,23 @@ export function SongNavbar() {
     }
   };
 
+
+  // Deleting the song After some time using the id
+
+  const deleteSong = async(myid)=>{
+    try{
+      let id = parseInt(myid)
+      await axios.delete(`http://localhost:9000/v1/songs/deleteSong/${id}`)
+      toast.success("Song From database deleted successfully")
+
+    }
+    catch(error){
+      console.log("Some error occured while deleting the data " + error)
+      toast.error("Some error occured while deleting the data " + error)
+    }
+    
+  }
+
   return (
     <>
       <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 h-[120px] w-full flex justify-center items-center px-4">
@@ -47,7 +133,7 @@ export function SongNavbar() {
             className="h-12 w-full sm:w-72 border-2 border-black rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"
           />
           <button
-            onClick={searchVideo}
+            onClick={sendSongToBackend}
             className="bg-black text-white rounded-lg px-4 py-2 w-full sm:w-24 mt-4 sm:mt-0 hover:bg-gray-800 transition duration-200 ease-in-out"
           >
             Search
@@ -72,9 +158,20 @@ export function SongNavbar() {
         )}
       </div>
 
+      <div>
+        <h1>display song</h1>
+        {songQueue.map((song,index)=>(
+          <div key={index}> 
+            <h1>{song.id}</h1>
+            <h1>{song.songName}</h1>
+          </div>
+        ))}
+      </div>
+
       <div className="flex justify-center items-center bg-gray-800 w-full h-32">
         <h1 className="text-lg text-gray-300">@Copyright 2024-2050</h1>
       </div>
+      <ToastContainer />
     </>
   );
 }

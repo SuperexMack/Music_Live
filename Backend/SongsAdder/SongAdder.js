@@ -32,7 +32,7 @@ router.post("/AddSong" , async(req,res)=>{
       let songInserted = await prisma.songName.create({
         data:{
         songName : songName,
-        duration : "120000"
+        duration : 120000
         }
       })
       if(songInserted){
@@ -65,7 +65,7 @@ router.get("/getAllSongs" , async(req,res)=>{
 
 router.delete("/deleteSong/:id" , async(req,res)=>{
 
-    let songId = req.params.id
+    let songId = parseInt(req.params.id , 10)
     try{
         await prisma.songName.delete({
             where:{
