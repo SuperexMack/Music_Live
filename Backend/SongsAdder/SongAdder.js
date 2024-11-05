@@ -12,6 +12,13 @@ const songChecker = zod.object({
 router.post("/AddSong" , async(req,res)=>{
 
     const {success} = songChecker.safeParse(req.body)
+
+    if(!success){
+        return res.json({
+            msg:"Your data is not correct"
+        })
+    }
+
     const {songName} = req.body
     if(songName.length==0){
         return res.json({
@@ -53,6 +60,29 @@ router.get("/getAllSongs" , async(req,res)=>{
             (songsName)
         )
     })
+})
+
+
+router.delete("/deleteSong/:id" , async(req,res)=>{
+
+    let songId = req.params.id
+    try{
+        await prisma.songName.delete({
+            where:{
+                id:songId
+            }
+        })
+        return res.json({
+            msg : "Song Successfully deleted from the database"
+        })
+    }
+
+    catch(error){
+        return res.json({
+            msg : "Something went wrong while deleting the song"
+        })
+    }
+    
 })
 
 module.exports = router
