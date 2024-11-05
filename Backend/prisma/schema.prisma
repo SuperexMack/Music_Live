@@ -20,3 +20,9 @@ model user{
   password String
   phoneNumber String
 }
+
+model songName{
+  id Int @unique @default(autoincrement())
+  songName String
+  duration String
+}
