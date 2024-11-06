@@ -10,8 +10,6 @@ export function SongNavbar() {
   const [songIndex , setSongIndex] = useState(0)
 
 
-
-
   // now using this we are going to get all the song with it's name and it's id
 
   useEffect(()=>{
@@ -38,6 +36,7 @@ export function SongNavbar() {
         songName : Title
       })
       toast.success("song added successfully , congratulations")
+      setTitle("")
     }
     catch(error){
       console.log("Something went wrong while adding the song to the database "  + error)
@@ -68,7 +67,7 @@ export function SongNavbar() {
       setTimeout(async()=>{
         await deleteSong(getSongId.id)
         setSongIndex(prev=>prev+1)
-      },5000)
+      },50000)
   
     }
     caller()
@@ -93,7 +92,7 @@ export function SongNavbar() {
 
       if (response.data.items.length > 0) {
         const videoId = response.data.items[0].id.videoId;
-        const videoLink = `https://www.youtube.com/embed/${videoId}`;
+        const videoLink = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
         setLink(videoLink);
         setTitle("");
       } else {
