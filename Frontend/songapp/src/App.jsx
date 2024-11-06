@@ -11,7 +11,7 @@ function App() {
      <BrowserRouter>
      <Routes>
       <Route path='/' element={<LandingPage></LandingPage>}></Route>
-      <Route path='/go' element={<Song></Song>}></Route>
+      <Route path='/go/:id' element={<Song></Song>}></Route>
       <Route path='/register' element={<Authorization></Authorization>}></Route>
       <Route path='/login' element={<AuthSecond></AuthSecond>}></Route>
      </Routes>

@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useParams } from "react-router-dom";
 
 export function SongNavbar() {
+  const {id} = useParams()
   const [Title, setTitle] = useState("");
   const [link, setLink] = useState("");
   const [songQueue, setSongQueue] = useState([])
@@ -14,7 +16,7 @@ export function SongNavbar() {
 
   useEffect(()=>{
     const instantCallerSongs = async()=>{
-    await axios.get("http://localhost:9000/v1/songs/getAllSongs")
+    await axios.get(`http://localhost:9000/v1/songs/getAllSongs/${id}`)
     .then((response)=>{
       console.log(response.data.allSongs)
       setSongQueue(response.data.allSongs)
@@ -32,7 +34,7 @@ export function SongNavbar() {
 
   const sendSongToBackend = async()=>{
     try{
-      await axios.post("http://localhost:9000/v1/songs/AddSong" , {
+      await axios.post(`http://localhost:9000/v1/songs/AddSong/${id}` , {
         songName : Title
       })
       toast.success("song added successfully , congratulations")
@@ -67,7 +69,7 @@ export function SongNavbar() {
       setTimeout(async()=>{
         await deleteSong(getSongId.id)
         setSongIndex(prev=>prev+1)
-      },50000)
+      },30000)
   
     }
     caller()

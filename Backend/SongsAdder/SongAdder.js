@@ -9,7 +9,7 @@ const songChecker = zod.object({
     songName : zod.string()
 })
 
-router.post("/AddSong" , async(req,res)=>{
+router.post("/AddSong/:id" , async(req,res)=>{
 
     const {success} = songChecker.safeParse(req.body)
 
@@ -29,10 +29,12 @@ router.post("/AddSong" , async(req,res)=>{
     // I will hard code the value of duration in miliseconds
 
     try{
+      let getStreamerId = parseInt(req.params.id)
       let songInserted = await prisma.songName.create({
         data:{
         songName : songName,
-        duration : 120000
+        duration : 120000,
+        authorId : getStreamerId
         }
       })
       if(songInserted){
@@ -52,8 +54,14 @@ router.post("/AddSong" , async(req,res)=>{
 
 // now we are going to fetch all the songs
 
-router.get("/getAllSongs" , async(req,res)=>{
-    let findAllSongs = await prisma.songName.findMany({})
+router.get("/getAllSongs/:id" , async(req,res)=>{
+
+    let liveSteamerId = parseInt(req.params.id)
+    let findAllSongs = await prisma.songName.findMany({
+        where:{
+            authorId : liveSteamerId
+        }
+    })
     return res.json({
         msg : "All the songs appreared here",
         allSongs:findAllSongs.map((songsName)=>
