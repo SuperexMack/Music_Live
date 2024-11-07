@@ -9,6 +9,7 @@ export function Authorization() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
+    const [loading , setLoading] = useState(false)
 
     const inputStyle = "border border-transparent p-3 w-full sm:w-[80%] md:w-[70%] rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 text-gray-700 bg-white shadow-md";
     const navigate = useNavigate();
@@ -17,19 +18,30 @@ export function Authorization() {
         navigate("/login");
     };
 
+    
+
     const handleRegister = async() => {
-        await axios.post("http://localhost:9000/v1/UserLogin",{
+        if (!/^\d{10}$/.test(phoneNumber)) {
+            toast.error("Please enter a valid 10-digit phone number.", { position: "top-right" });
+            return;
+        }
+        
+        setLoading(true)
+        await axios.post("http://localhost:9000/v1/UserRegister",{
             email : email,
             password : password,
             phoneNumber:phoneNumber
         })
         .then((response)=>{
             let getToken = response.data.token
-            localStorage.setItem("Authorization" , "Bearer " + getToken)
+            localStorage.setItem("authorization" , "Bearer " + getToken)
+            setLoading(false)
             toast.success("Registered Successfully!", { position: "top-right" });
+            setTimeout(navigate("/"),3000)
         })
         .catch((error)=>{
             console.log("Something went wrong while register " + error)
+            setLoading(false)
             toast.error("Something went wrong while register " + error)
         })
         
@@ -37,7 +49,13 @@ export function Authorization() {
 
     return (
         <>
-            <div className="h-screen w-full flex justify-center items-center px-4 sm:px-0 bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500">
+        {loading ?(
+        <div className="h-screen flex justify-center items-center bg-black">
+            <h1 className="text-[100px] text-white">Loading........</h1>
+        </div>
+        ):(
+            <>
+        <div className="h-screen w-full flex justify-center items-center px-4 sm:px-0 bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500">
                 <div className="rounded-lg shadow-2xl h-auto sm:h-[700px] w-full sm:w-[500px] flex flex-col items-center space-y-6 sm:space-y-10 p-8 sm:p-10 bg-white bg-opacity-90 backdrop-blur-lg">
                     <h2 className="text-[30px] sm:text-[40px] font-bold mt-6 sm:mt-10 text-center text-gray-800">
                         Welcome !
@@ -86,7 +104,11 @@ export function Authorization() {
                     </div>
                 </div>
             </div>
-            <ToastContainer />
+            
+           
+            </>
+        )} 
+         <ToastContainer />
         </>
     );
 }

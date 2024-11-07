@@ -61,7 +61,7 @@ router.post("/UserRegister" , async(req,res)=>{
 
 
 router.post("/UserLogin" , async(req,res)=>{
-    let {success} = zod.safeParse(req.body)
+    let {success} = userChecker.safeParse(req.body)
     if(!success) return res.json({msg:"Your Data is unaccurate"})
     else{
       try{

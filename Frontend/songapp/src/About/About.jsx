@@ -30,7 +30,7 @@ export function About() {
                 <section className="my-10 max-w-3xl">
                     <h2 className="text-[28px] font-semibold text-teal-300 mt-10 mb-5">Our Technology</h2>
                     <p className="text-[18px] leading-relaxed text-gray-300">
-                        We leverage the power of the <strong className="text-teal-200">MERN stack (MongoDB, Express, React, Node.js)</strong> to provide a fast, reliable, and interactive experience for our users. This technology stack allows us to create a platform that’s both scalable and secure, handling the high demand of concurrent viewers and real-time song updates with ease.
+                        We leverage the power of the <strong className="text-teal-200">PERN stack (Postgresql, Express, React, Node.js)</strong> to provide a fast, reliable, and interactive experience for our users. This technology stack allows us to create a platform that’s both scalable and secure, handling the high demand of concurrent viewers and real-time song updates with ease.
                         <br /><br />
                         Our integration with the Spotify API gives viewers the freedom to choose from an extensive library of songs, while our payment system ensures a smooth and secure transaction for each request. With the WebSocket protocol, we ensure that every update is shared instantaneously.
                     </p>
