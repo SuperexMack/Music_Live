@@ -5,6 +5,8 @@ const express = require("express")
 const zod = require("zod")
 const router = express.Router()
 const path  = require("path")
+const userMiddleWare = require("./middleWare")
+const { emit } = require("process")
 require("dotenv").config({path:path.resolve(__dirname , "../env")})
 const SECRET_POINT = process.env.SECRET_POINT
 
@@ -84,6 +86,34 @@ router.post("/UserLogin" , async(req,res)=>{
         })
       }
     }
+  })
+
+
+
+  router.get("/userALLData/:id" , async(req,res)=>{
+    let myUserId = parseInt(req.params.id)
+    
+
+      let findTheUser = await prisma.user.findUnique({
+        where:{
+          id : myUserId
+        }
+      })
+      
+      if (!findTheUser) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+
+      let getemail = findTheUser.email
+      let getPhoneNumber = findTheUser.phoneNumber
+
+      return res.json({
+        id : myUserId,
+        phoneNumber : getPhoneNumber,
+        email : getemail
+      })
+    
   })
 
 

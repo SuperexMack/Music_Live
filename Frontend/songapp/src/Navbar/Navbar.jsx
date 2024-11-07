@@ -39,6 +39,7 @@ export function Navbar() {
           {online ?(
             <>
              <li><Link to="/go/:id">Organize Live-Stream</Link></li>
+             <li><Link to="/profile">Your Profile</Link></li>
              <li><Link>Home</Link></li>
              <li className="hover:cursor-pointer" onClick={Logout}>LogOut</li>
             </>
@@ -63,6 +64,7 @@ export function Navbar() {
           {online ?(
             <>
              <li><Link to="/">Home</Link></li>
+             <li><Link to="/profile">Your Profile</Link></li>
              <li><Link to="/go/:id">Organize Live-Stream</Link></li>
              <li onClick={Logout}>LogOut</li>
             </>

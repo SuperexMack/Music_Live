@@ -14,68 +14,69 @@ export function SongNavbar() {
 
   // now using this we are going to get all the song with it's name and it's id
 
-  useEffect(()=>{
     const instantCallerSongs = async()=>{
     await axios.get(`http://localhost:9000/v1/songs/getAllSongs/${id}`)
     .then((response)=>{
       console.log(response.data.allSongs)
       setSongQueue(response.data.allSongs)
-      return toast.success("All songs fetched successfully")
+      toast.success("All songs fetched successfully")
     })
     .catch((error)=>{
       console.log("something went wrong while getting the songs" + error)
     })
     }
-    instantCallerSongs()
-  },[])
+    
+  
+
+    useEffect(()=>{
+      instantCallerSongs()
+    },[])
 
 
   // using this we are going to add the song to the database
 
-  const sendSongToBackend = async()=>{
-    try{
-      await axios.post(`http://localhost:9000/v1/songs/AddSong/${id}` , {
-        songName : Title
-      })
-      toast.success("song added successfully , congratulations")
-      setTitle("")
-    }
-    catch(error){
-      console.log("Something went wrong while adding the song to the database "  + error)
-      toast.error("Something went wrong while adding the song to the database "  + error)
-    }
-    
+  
+useEffect(() => {
+  if (songQueue.length <= 0) {
+    return;
   }
+  const caller = async () => {
+    const getSongId = songQueue[songIndex];
 
-
-  // here we are going to play the song
-
-  useEffect(()=>{
-    // now we are going to get the data
-    if(songQueue.length<=0){
-      return
+    if (!getSongId) {
+      console.log("No song found at the current index.");
+      return;
     }
-    const caller = async()=>{
+
+    await searchVideo(getSongId.songName);
+    setTimeout(async () => {
+      await deleteSong(getSongId.id);
+      setSongIndex((prev) => prev + 1);
+    }, 30000);
+  };
+
+  caller();
+}, [songQueue, songIndex]);
+
+
+const sendSongToBackend = async () => {
+  try {
+    await axios.post(`http://localhost:9000/v1/songs/AddSong/${id}`, {
+      songName: Title,
+    });
+    toast.success("Song added successfully!");
+    setTitle("");
+
     
-      let getSongId = songQueue[songIndex] // we are tracking elememt
+    instantCallerSongs();
+  } catch (error) {
+    console.log("Error while adding the song: " + error);
+    toast.error("Error adding the song: " + error);
+  }
+};
 
-      if (!getSongId) {
-        console.log("No song found at the current index.");
-        return;
-      }
-     
-  
-      await searchVideo(getSongId.songName)
-      setTimeout(async()=>{
-        await deleteSong(getSongId.id)
-        setSongIndex(prev=>prev+1)
-      },30000)
-  
-    }
-    caller()
-  },[songQueue,songIndex])
 
-  const API_KEY = "AIzaSyBMmDk3iaow6yn7TYSyap0yXmQ3BQPrbGI";
+  const API_KEY = "AIzaSyDe_afWqq9kqdgA-m3xJ__Zr6Y4cNRO_YA";
 
   const searchVideo = async (q) => {
     try {
