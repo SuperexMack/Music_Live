@@ -20,6 +20,10 @@ export function AuthSecond() {
    
 
     const loginUser = async() => {
+        if (!/^\d{10}$/.test(phoneNumber)) {
+            toast.error("Please enter a valid 10-digit phone number.", { position: "top-center" });
+            return;
+        }
         setLoading(true)
         await axios.post("http://localhost:9000/v1/UserLogin",{
             email : email,
@@ -28,15 +32,27 @@ export function AuthSecond() {
         })
         .then((response)=>{
             let getToken = response.data.token
-            localStorage.setItem("authorization" , "Bearer " + getToken)
+            let msg = response.data.msg
+            if(msg === "No such type of user Exist || It requires a Sign up"){
             setLoading(false)
-            toast.success("Registered Successfully!", { position: "top-right" });
-            setTimeout(navigate("/") , 3000)
+            toast.error(msg, { position: "top-right" });
+            return
+            }
+            else{
+                localStorage.setItem("authorization" , "Bearer " + getToken)
+                setLoading(false)
+                toast.success(msg, { position: "top-right" });
+                setTimeout(() => {
+                    navigate("/");
+                }, 4000);
+            }
+
         })
-        .catch((error)=>{
+        .catch((error,response)=>{
+            let getInfo = response.data.msg
             console.log("Something went wrong while register " + error)
             setLoading(false)
-            toast.error("Something went wrong while register " + error)
+            toast.error(msg + error)
         })
         
     };
@@ -46,9 +62,12 @@ export function AuthSecond() {
 
 
       {loading ? (
-        <div className="h-screen flex justify-center items-center bg-black">
-        <h1 className="text-[100px] text-white">Loading........</h1>
-       </div>
+       <div className="h-screen flex justify-center items-center bg-black">
+       <h1 className="text-white text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl">
+           Loading...
+       </h1>
+   </div>
+   
       ):(
         <div className="h-screen w-full flex justify-center items-center bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 px-4 sm:px-0">
         <div className="rounded-lg shadow-2xl h-auto sm:h-[700px] w-full sm:w-[500px] flex flex-col items-center space-y-6 p-8 sm:p-10 bg-white bg-opacity-90 backdrop-blur-lg">
@@ -56,9 +75,9 @@ export function AuthSecond() {
                 User Login
             </h2>
             
-            <input value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="Enter Your Email" className={inputStyle} type="email" />
-            <input value={phoneNumber} onChange={(e)=>setPhoneNumber(e.target.value)} placeholder="Enter Your Phone Number" className={inputStyle} type="tel" />
-            <input value={password} onChange={(e)=>setPassword(e.target.value)} placeholder="Enter Your Password" className={inputStyle} type="password" />
+            <input required value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="Enter Your Email" className={inputStyle} type="email" />
+            <input required value={phoneNumber} onChange={(e)=>setPhoneNumber(e.target.value)} placeholder="Enter Your Phone Number" className={inputStyle} type="tel" />
+            <input required value={password} onChange={(e)=>setPassword(e.target.value)} placeholder="Enter Your Password" className={inputStyle} type="password" />
             
             <div className="flex flex-col w-full space-y-4 mt-4">
                 <button 

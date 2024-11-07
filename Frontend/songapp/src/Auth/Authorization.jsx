@@ -25,7 +25,7 @@ export function Authorization() {
             toast.error("Please enter a valid 10-digit phone number.", { position: "top-right" });
             return;
         }
-        
+
         setLoading(true)
         await axios.post("http://localhost:9000/v1/UserRegister",{
             email : email,
@@ -34,10 +34,18 @@ export function Authorization() {
         })
         .then((response)=>{
             let getToken = response.data.token
+            let getResponse = response.data.msg
+            if(getResponse === "User Already available with same email"){
+            setLoading(false)
+            toast.error(getResponse, { position: "top-right" });
+            return
+            }
             localStorage.setItem("authorization" , "Bearer " + getToken)
             setLoading(false)
-            toast.success("Registered Successfully!", { position: "top-right" });
-            setTimeout(navigate("/"),3000)
+            toast.success(getResponse, { position: "top-right" });
+            setTimeout(() => {
+                navigate("/");
+            }, 4000);
         })
         .catch((error)=>{
             console.log("Something went wrong while register " + error)
@@ -51,8 +59,11 @@ export function Authorization() {
         <>
         {loading ?(
         <div className="h-screen flex justify-center items-center bg-black">
-            <h1 className="text-[100px] text-white">Loading........</h1>
-        </div>
+        <h1 className="text-white text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl">
+            Loading...
+        </h1>
+    </div>
+    
         ):(
             <>
         <div className="h-screen w-full flex justify-center items-center px-4 sm:px-0 bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500">
@@ -67,6 +78,7 @@ export function Authorization() {
                         placeholder="Enter Your Email" 
                         className={inputStyle} 
                         type="email" 
+                        required
                     />
                     <input 
                         value={phoneNumber} 
@@ -74,6 +86,7 @@ export function Authorization() {
                         placeholder="Enter Your Phone Number" 
                         className={inputStyle} 
                         type="tel" 
+                        required
                     />
                     <input 
                         value={password} 
@@ -81,6 +94,7 @@ export function Authorization() {
                         placeholder="Enter Your Password" 
                         className={inputStyle} 
                         type="password" 
+                        required
                     />
 
                     <div className="space-y-4 w-full sm:w-[80%] flex flex-col mt-4">

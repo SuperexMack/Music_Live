@@ -23,8 +23,8 @@ router.post("/UserRegister" , async(req,res)=>{
       // we will store the data 
 
       const {email , phoneNumber , password} = req.body
-      let findUserusingEmail = await prisma.user.findUnique({
-        where:{email:email}
+      let findUserusingEmail = await prisma.user.findFirst({
+        where:{email:email , phoneNumber:phoneNumber}
       })
       if(findUserusingEmail){
         return res.json({msg:"User Already available with same email"})
@@ -47,7 +47,7 @@ router.post("/UserRegister" , async(req,res)=>{
         let getUserId = storeNewUserData.id
         const giveToken = jwt.sign({getUserId} , SECRET_POINT)
         console.log("succees")
-        return res.json({token : giveToken , msg:"Welcome to the site sir!!"})
+        return res.json({token : giveToken , msg:"Welcome to the site sir!! wait a while we are redirecting you`"})
 
       }
 
@@ -65,18 +65,18 @@ router.post("/UserLogin" , async(req,res)=>{
     if(!success) return res.json({msg:"Your Data is unaccurate"})
     else{
       try{
-        let {email} = req.body
-        let findUserusingEmail = await prisma.user.findUnique({
-          where:{email:email}
+        let {email , phoneNumber , password} = req.body
+        let findUserusingEmail = await prisma.user.findFirst({
+          where:{email:email , phoneNumber : phoneNumber , password : password}
         })
         if(!findUserusingEmail){
           return res.json({msg:"No such type of user Exist || It requires a Sign up"})
         }
-        else{
+        
             let getUserId = findUserusingEmail.id
             const giveToken = jwt.sign({getUserId} , SECRET_POINT)
-            return res.json({token : giveToken , msg:"Welcome Back Sir"})
-        }
+            return res.json({token : giveToken , msg:"Welcome Back Sir "})
+        
       }
       catch(err){
         return res.json({
