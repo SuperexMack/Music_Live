@@ -38,6 +38,7 @@ export function Navbar() {
           
           {online ?(
             <>
+             <li><Link to="/go/:id">Organize Live-Stream</Link></li>
              <li><Link>Home</Link></li>
              <li className="hover:cursor-pointer" onClick={Logout}>LogOut</li>
             </>
@@ -61,12 +62,13 @@ export function Navbar() {
           <ul className="absolute top-[80px] left-0 w-full bg-[#192A56] text-white flex flex-col items-center space-y-6 py-4 text-[18px] font-semibold z-10">
           {online ?(
             <>
-             <li><Link>Home</Link></li>
+             <li><Link to="/">Home</Link></li>
+             <li><Link to="/go/:id">Organize Live-Stream</Link></li>
              <li onClick={Logout}>LogOut</li>
             </>
           ) : (
            <>
-            <li><Link>Home</Link></li>
+           <li><Link to="/">Home</Link></li>
            <li><Link to="/login">Login</Link></li>
            <li><Link to="/register">SignUp</Link></li>
            </>
