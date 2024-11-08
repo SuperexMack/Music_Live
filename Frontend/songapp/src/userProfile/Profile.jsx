@@ -1,12 +1,15 @@
 import { jwtDecode } from "jwt-decode"; 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Photo from "./newape.png";
 import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export function Profile() {
   const [userId, setUserId] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
+  const copyPasswordRef = useRef(null)
 
   const findUserID = () => {
     let findId = localStorage.getItem("authorization");
@@ -39,6 +42,17 @@ export function Profile() {
     if (userId) getdata();
   }, [userId]);
 
+
+
+  const copypassword = `https://music-live-pi.vercel.app/${userId}`
+
+  const copyMyPassword = ()=>{
+    copyPasswordRef.current?.select()
+    window.navigator.clipboard.writeText(copypassword)
+    toast.success("Room id copied to clipboard succussfully")
+  }
+
+
   return (
     <>
       {userId ? (
@@ -56,9 +70,11 @@ export function Profile() {
               <p className="font-semibold">UserId - {userId}</p>
               <p className="font-mono text-[20px]">Phone Number - {phoneNumber}</p>
               <p className="font-mono text-[20px]">Email - {email}</p>
+              <div className="flex space-x-6">
               <p className="font-light text-[20px]">
-                Share your Room Code - https://music-live-pi.vercel.app/{userId}
-              </p>
+                Share your Room Code - {copypassword} </p>
+                <button onClick={copyMyPassword} className="rounded-lg  bg-[#303339] text-white text-[15px] p-2">Copy Room ID</button>
+                </div>
             </div>
           </div>
         </div>
@@ -69,6 +85,7 @@ export function Profile() {
           </p>
         </div>
       )}
+       <ToastContainer />
     </>
   );
 }
