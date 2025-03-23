@@ -76,7 +76,7 @@ const sendSongToBackend = async () => {
 };
 
 
-  const API_KEY = "AIzaSyDe_afWqq9kqdgA-m3xJ__Zr6Y4cNRO_YA";
+  const API_KEY = "";
 
   const searchVideo = async (q) => {
     try {
